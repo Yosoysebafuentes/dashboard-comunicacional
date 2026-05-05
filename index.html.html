@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ComPlan — Dashboard Comunicacional</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #F5F3EE;
+    --surface: #FFFFFF;
+    --surface2: #F0EDE8;
+    --border: #E2DDD6;
+    --border2: #CCC8BF;
+    --text: #1A1915;
+    --text2: #5A574F;
+    --text3: #9A9790;
+    --accent: #2B5CE6;
+    --accent-light: #EEF2FD;
+    --accent2: #0F3FA3;
+    --danger: #C73532;
+    --danger-light: #FEF0EF;
+    --success: #1E7A4A;
+    --success-light: #EEFBF4;
+    --warning: #B05A0A;
+    --warning-light: #FEF6ED;
+    --sidebar-w: 248px;
+    --header-h: 60px;
+    --radius: 10px;
+    --radius-sm: 6px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.12), 0 2px 6px rgba(0,0,0,0.06);
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    height: var(--header-h);
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 16px;
+    padding: 0 24px;
+  }
+  .header-logo {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.3px;
+    display: flex; align-items: center; gap: 9px;
+  }
+  .header-logo-icon {
+    width: 28px; height: 28px; border-radius: 7px;
+    background: var(--accent); display: flex; align-items: center; justify-content: center;
+  }
+  .header-logo span { color: var(--accent); }
+  .header-divider { width: 1px; height: 20px; background: var(--border); }
+  .header-subtitle { font-size: 12px; color: var(--text3); letter-spacing: 0.4px; text-transform: uppercase; }
+  .header-actions { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 7px 14px; border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+    cursor: pointer; border: none; transition: all 0.15s ease;
+    text-decoration: none; white-space: nowrap; line-height: 1;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: var(--accent2); }
+  .btn-ghost { background: transparent; color: var(--text2); border: 1px solid var(--border); }
+  .btn-ghost:hover { background: var(--surface2); border-color: var(--border2); }
+  .btn-danger { background: var(--danger-light); color: var(--danger); border: 1px solid #FBBFBC; }
+  .btn-danger:hover { background: #FDD9D8; }
+  .btn-success { background: var(--success-light); color: var(--success); border: 1px solid #A3DFBF; }
+  .btn-sm { padding: 5px 10px; font-size: 12px; }
+  .btn-icon { padding: 5px; border-radius: var(--radius-sm); }
+
+  /* ── LAYOUT ── */
+  .app-body { display: flex; padding-top: var(--header-h); min-height: 100vh; }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed; top: var(--header-h); left: 0; bottom: 0;
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex; flex-direction: column;
+    overflow-y: auto; z-index: 90;
+  }
+  .sidebar-section { padding: 16px 12px 8px; }
+  .sidebar-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.8px;
+    text-transform: uppercase; color: var(--text3); padding: 0 8px;
+    margin-bottom: 8px; display: block;
+  }
+  .account-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 10px; border-radius: var(--radius-sm);
+    cursor: pointer; transition: all 0.12s ease;
+    margin-bottom: 2px;
+  }
+  .account-item:hover { background: var(--surface2); }
+  .account-item.active { background: var(--accent-light); }
+  .account-dot {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700; flex-shrink: 0; letter-spacing: 0.3px;
+  }
+  .account-info { flex: 1; min-width: 0; }
+  .account-name {
+    font-size: 13px; font-weight: 500; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .account-item.active .account-name { color: var(--accent); }
+  .account-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .account-badge {
+    font-size: 10px; font-weight: 700; min-width: 20px; height: 20px;
+    border-radius: 10px; display: flex; align-items: center;
+    justify-content: center; padding: 0 6px;
+  }
+  .sidebar-sep { height: 1px; background: var(--border); margin: 8px 12px; }
+  .sidebar-bottom { padding: 12px; border-top: 1px solid var(--border); margin-top: auto; }
+  .global-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .stat-mini {
+    background: var(--surface2); border-radius: var(--radius-sm);
+    padding: 8px 10px; text-align: center;
+  }
+  .stat-mini-val { font-size: 20px; font-weight: 600; color: var(--text); display: block; line-height: 1.1; }
+  .stat-mini-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; display: block; }
+
+  /* ── MAIN ── */
+  .main { margin-left: var(--sidebar-w); flex: 1; }
+
+  /* ── ACCOUNT HEADER ── */
+  .account-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 22px 28px 0;
+  }
+  .account-title-row {
+    display: flex; align-items: flex-start; gap: 14px; margin-bottom: 16px;
+  }
+  .account-icon-lg {
+    width: 50px; height: 50px; border-radius: 13px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; flex-shrink: 0; letter-spacing: 0.3px;
+  }
+  .account-title-lg {
+    font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 700;
+    color: var(--text); letter-spacing: -0.5px; line-height: 1.15;
+  }
+  .account-desc { font-size: 13px; color: var(--text2); margin-top: 3px; }
+  .account-kpis { display: flex; gap: 0; border-top: 1px solid var(--border); margin-top: 4px; }
+  .kpi-tab {
+    display: flex; align-items: center; gap: 7px;
+    padding: 12px 18px 14px; font-size: 13px; color: var(--text3);
+    border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.12s;
+    user-select: none;
+  }
+  .kpi-tab:hover { color: var(--text2); }
+  .kpi-tab.active { color: var(--accent); border-color: var(--accent); }
+  .kpi-tab-val { font-weight: 600; font-size: 15px; color: inherit; }
+
+  /* ── CONTENT ── */
+  .content { padding: 24px 28px; }
+  .toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .search-box {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 7px 12px;
+    flex: 1; max-width: 280px; min-width: 160px;
+  }
+  .search-box input {
+    border: none; background: transparent;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; color: var(--text); outline: none; width: 100%;
+  }
+  .search-box input::placeholder { color: var(--text3); }
+  .filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-chip {
+    padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: var(--surface);
+    color: var(--text2); transition: all 0.12s; user-select: none;
+  }
+  .filter-chip:hover { border-color: var(--border2); background: var(--surface2); }
+  .filter-chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .spacer { flex: 1; min-width: 8px; }
+
+  /* ── CAMPAIGNS ── */
+  .campaigns-grid { display: flex; flex-direction: column; gap: 14px; }
+
+  .campaign-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.15s;
+  }
+  .campaign-card:hover { box-shadow: var(--shadow-lg); }
+
+  .campaign-header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 16px; cursor: pointer;
+    transition: background 0.1s; user-select: none;
+  }
+  .campaign-header:hover { background: #FAFAF8; }
+
+  .campaign-toggle {
+    width: 22px; height: 22px; display: flex;
+    align-items: center; justify-content: center;
+    color: var(--text3); flex-shrink: 0;
+    transition: transform 0.2s; border-radius: 4px;
+  }
+  .campaign-toggle.open { transform: rotate(90deg); }
+
+  .campaign-color-bar { width: 3px; height: 38px; border-radius: 2px; flex-shrink: 0; }
+
+  .campaign-info { flex: 1; min-width: 0; }
+  .campaign-name { font-size: 14px; font-weight: 600; color: var(--text); }
+  .campaign-meta { display: flex; align-items: center; gap: 7px; margin-top: 4px; flex-wrap: wrap; }
+  .campaign-date { font-size: 11px; color: var(--text3); }
+
+  .campaign-counters { display: flex; gap: 16px; align-items: center; padding: 0 8px; }
+  .camp-count { text-align: center; min-width: 36px; }
+  .camp-count-val { font-size: 15px; font-weight: 600; color: var(--text); display: block; }
+  .camp-count-lbl { font-size: 10px; color: var(--text3); }
+
+  .campaign-progress-wrap { display: flex; align-items: center; gap: 8px; min-width: 120px; }
+  .progress-bar { flex: 1; height: 5px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; transition: width 0.4s ease; }
+  .progress-pct { font-size: 12px; font-weight: 600; color: var(--text2); min-width: 32px; text-align: right; }
+
+  .campaign-btns { display: flex; gap: 5px; align-items: center; }
+
+  /* ── ACTIONS SECTION ── */
+  .actions-section { border-top: 1px solid var(--border); }
+  .actions-section.collapsed { display: none; }
+  .actions-table-wrap { overflow-x: auto; }
+
+  .actions-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .actions-table thead { background: var(--surface2); }
+  .actions-table th {
+    padding: 8px 14px; text-align: left;
+    font-size: 10px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; color: var(--text3);
+    white-space: nowrap; border-bottom: 1px solid var(--border);
+  }
+  .actions-table td {
+    padding: 10px 14px; border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  .actions-table tr:last-child td { border-bottom: none; }
+  .actions-table tr:hover td { background: #FAFAF8; }
+
+  .action-name { font-weight: 500; color: var(--text); }
+  .action-desc { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  .actions-footer {
+    padding: 9px 14px; border-top: 1px solid var(--border);
+    background: var(--surface2); display: flex; align-items: center; gap: 8px;
+  }
+
+  /* ── BADGES ── */
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 3px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 500; white-space: nowrap;
+  }
+  .badge-pendiente   { background: var(--warning-light); color: var(--warning); }
+  .badge-en-progreso { background: var(--accent-light);  color: var(--accent);  }
+  .badge-completada  { background: var(--success-light); color: var(--success); }
+  .badge-pausada     { background: var(--surface2);      color: var(--text3);   }
+  .badge-cancelada   { background: var(--danger-light);  color: var(--danger);  }
+
+  /* ── PRIORITY ── */
+  .prio { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 500; }
+  .prio-alta  { color: var(--danger);  }
+  .prio-media { color: var(--warning); }
+  .prio-baja  { color: var(--success); }
+
+  /* ── AVATAR ── */
+  .avatar-sm {
+    width: 26px; height: 26px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; flex-shrink: 0;
+  }
+
+  /* ── CHANNEL CHIP ── */
+  .channel-chip {
+    font-size: 11px; background: var(--surface2);
+    padding: 2px 8px; border-radius: 10px; color: var(--text2);
+    white-space: nowrap;
+  }
+
+  /* ── TYPE CHIP ── */
+  .type-chip { font-size: 11px; color: var(--text3); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15,15,10,0.48);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    padding: 20px;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: auto; }
+  .modal {
+    background: var(--surface); border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); width: 560px; max-width: 100%;
+    max-height: calc(100vh - 60px); overflow-y: auto;
+    transform: translateY(14px); transition: transform 0.22s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-header { padding: 22px 24px 0; }
+  .modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 700; color: var(--text); }
+  .modal-sub { font-size: 13px; color: var(--text3); margin-top: 3px; }
+  .modal-body { padding: 18px 24px; }
+  .modal-footer { padding: 0 24px 22px; display: flex; gap: 10px; justify-content: flex-end; }
+
+  .form-group { margin-bottom: 14px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .form-label { font-size: 12px; font-weight: 500; color: var(--text2); margin-bottom: 5px; display: block; }
+  .form-control {
+    width: 100%; padding: 8px 12px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border); background: var(--surface);
+    font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text);
+    outline: none; transition: border-color 0.12s; -webkit-appearance: none;
+  }
+  .form-control:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(43,92,230,0.1); }
+  textarea.form-control { min-height: 68px; resize: vertical; }
+  select.form-control { cursor: pointer; }
+  input[type="color"].form-control { height: 38px; padding: 3px 8px; cursor: pointer; }
+
+  .form-section-title {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.6px;
+    text-transform: uppercase; color: var(--text3);
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* ── EMPTY ── */
+  .empty-state { text-align: center; padding: 36px 20px; }
+  .empty-icon { font-size: 30px; margin-bottom: 10px; opacity: 0.45; }
+  .empty-title { font-size: 15px; font-weight: 500; color: var(--text2); }
+  .empty-desc { font-size: 13px; color: var(--text3); margin-top: 4px; margin-bottom: 14px; }
+
+  /* ── TOAST ── */
+  .toast-wrap {
+    position: fixed; bottom: 24px; right: 24px; z-index: 400;
+    display: flex; flex-direction: column; gap: 8px; pointer-events: none;
+  }
+  .toast {
+    background: #1A1915; color: #fff; padding: 10px 16px;
+    border-radius: var(--radius-sm); font-size: 13px;
+    animation: toastIn 0.22s ease; box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 8px; pointer-events: auto;
+  }
+  @keyframes toastIn {
+    from { transform: translateX(20px); opacity:0; }
+    to   { transform: none; opacity:1; }
+  }
+
+  /* ── CONFIRM MODAL ── */
+  .confirm-modal { width: 400px; }
+  .confirm-icon { font-size: 26px; margin-bottom: 6px; }
+
+  /* ── OVERDUE ── */
+  .overdue-dot { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--danger); margin-left: 4px; vertical-align: middle; }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+  @media (max-width: 860px) {
+    :root { --sidebar-w: 200px; }
+    .content { padding: 16px; }
+    .form-row-3 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    :root { --sidebar-w: 0px; }
+    .sidebar { display: none; }
+    .form-row, .form-row-3 { grid-template-columns: 1fr; }
+    .campaign-counters { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ HEADER ═══════════════ -->
+<header class="header">
+  <div class="header-logo">
+    <div class="header-logo-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <rect x="2" y="4" width="5" height="1.5" rx="0.75" fill="white"/>
+        <rect x="2" y="7" width="8" height="1.5" rx="0.75" fill="white"/>
+        <rect x="2" y="10" width="6" height="1.5" rx="0.75" fill="white"/>
+        <circle cx="13" cy="4.75" r="2.5" fill="#90AAFF"/>
+      </svg>
+    </div>
+    Com<span>Plan</span>
+  </div>
+  <div class="header-divider"></div>
+  <span class="header-subtitle">Planes Comunicacionales</span>
+  <div class="header-actions">
+    <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+      </svg>
+      Exportar CSV
+    </button>
+    <button class="btn btn-primary btn-sm" onclick="openNewCampaign()">
+      <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor">
+        <path d="M6.75 0h-1.5v5.25H0v1.5h5.25V12h1.5V6.75H12v-1.5H6.75V0z"/>
+      </svg>
+      Nueva campaña
+    </button>
+  </div>
+</header>
+
+<div class="app-body">
+
+  <!-- ═══════════════ SIDEBAR ═══════════════ -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <span class="sidebar-label">Cuentas</span>
+      <div id="accounts-list"></div>
+    </div>
+    <div class="sidebar-sep"></div>
+    <div class="sidebar-section" style="padding-top:8px;">
+      <span class="sidebar-label">Acción rápida</span>
+      <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center;" onclick="openNewCampaign()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor"><path d="M6.75 0h-1.5v5.25H0v1.5h5.25V12h1.5V6.75H12v-1.5H6.75V0z"/></svg>
+        Nueva campaña
+      </button>
+    </div>
+    <div class="sidebar-bottom">
+      <div style="font-size:10px;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:8px;">Resumen global</div>
+      <div class="global-stats" id="global-stats"></div>
+    </div>
+  </aside>
+
+  <!-- ═══════════════ MAIN ═══════════════ -->
+  <main class="main" id="main-content"></main>
+
+</div>
+
+<!-- ═══════════════ MODAL ═══════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal" id="modal-box" onclick="event.stopPropagation()">
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<!-- ═══════════════ TOASTS ═══════════════ -->
+<div class="toast-wrap" id="toast-wrap"></div>
+
+<!-- ═══════════════ SCRIPT ═══════════════ -->
+<script>
+// ────────────────────────────────────────────────────────────────
+// CONSTANTES
+// ────────────────────────────────────────────────────────────────
+const ACCOUNTS = {
+  ceuss:         { id:'ceuss',         name:'CEUSS',         abbr:'CE', color:'#2B5CE6', desc:'Centro de Extensión USS' },
+  vcm:           { id:'vcm',           name:'VcM',           abbr:'VC', color:'#6B3FD4', desc:'Vinculación con el Medio' },
+  investigacion: { id:'investigacion', name:'Investigación', abbr:'IN', color:'#0D7A6A', desc:'Difusión e Impacto Científico' },
+  centinela:     { id:'centinela',     name:'Centinela',     abbr:'CT', color:'#C73532', desc:'Velero Escuela' }
+};
+
+const STATUS_LABELS = {
+  'pendiente':   'Pendiente',
+  'en-progreso': 'En progreso',
+  'completada':  'Completada',
+  'pausada':     'Pausada',
+  'cancelada':   'Cancelada'
+};
+const PRIO_LABELS = { alta:'Alta', media:'Media', baja:'Baja' };
+
+const TYPES    = ['Planificación','Digital','Diseño','PR','Eventos','Email','Publicación','Audiovisual','Capacitación','OOH','Otro'];
+const CHANNELS = ['RRSS','Web','Email','Prensa','Alianza','TV','Radio','Académico','Interno','Otro'];
+
+// ────────────────────────────────────────────────────────────────
+// ESTADO INICIAL (datos demo)
+// ────────────────────────────────────────────────────────────────
+const INITIAL_DATA = {
+  campaigns: [
+    { id:'c1', account:'ceuss',         name:'Campaña Admisión 2025',        desc:'Convocatoria y atracción de postulantes',         color:'#2B5CE6', start:'2025-03-01', end:'2025-06-30', status:'en-progreso' },
+    { id:'c2', account:'ceuss',         name:'Semana de la Educación',        desc:'Eventos y difusión anual',                        color:'#5B8AF5', start:'2025-09-01', end:'2025-09-15', status:'pendiente'   },
+    { id:'c3', account:'vcm',           name:'Congreso Anual VcM',            desc:'Posicionamiento institucional externo',           color:'#6B3FD4', start:'2025-04-01', end:'2025-07-31', status:'en-progreso' },
+    { id:'c4', account:'vcm',           name:'Alianzas Estratégicas',         desc:'Comunicación de nuevas alianzas institucionales', color:'#9B72E8', start:'2025-05-01', end:'2025-08-31', status:'pendiente'   },
+    { id:'c5', account:'investigacion', name:'Divulgación Científica Q1',     desc:'Publicaciones y medios especializados',           color:'#0D7A6A', start:'2025-01-01', end:'2025-03-31', status:'completada'  },
+    { id:'c6', account:'investigacion', name:'Open Science Week',             desc:'Semana de ciencia abierta y talleres',            color:'#1AAD96', start:'2025-10-01', end:'2025-10-07', status:'pendiente'   },
+    { id:'c7', account:'centinela',     name:'Protocolo Crisis Medios',       desc:'Manual y plan de acción ante contingencias',      color:'#C73532', start:'2025-02-01', end:'2025-12-31', status:'en-progreso' },
+    { id:'c8', account:'centinela',     name:'Monitoreo Reputacional Q2',     desc:'Seguimiento de menciones y alertas',              color:'#E05250', start:'2025-04-01', end:'2025-06-30', status:'en-progreso' },
+  ],
+  actions: [
+    // c1 - Admisión
+    { id:'a1',  campaign:'c1', name:'Brief agencia creativa',      desc:'Definir lineamientos de campaña',                type:'Planificación', channel:'Interno',  status:'completada',  priority:'alta',  responsible:'Ana M.',    due:'2025-03-10' },
+    { id:'a2',  campaign:'c1', name:'Pauta en redes sociales',     desc:'Instagram, Facebook y TikTok',                  type:'Digital',       channel:'RRSS',     status:'en-progreso', priority:'alta',  responsible:'Carlos R.', due:'2025-04-15' },
+    { id:'a3',  campaign:'c1', name:'Pieza gráfica afiche A3',     desc:'Diseño para impresión y digital',                type:'Diseño',        channel:'Alianza',  status:'en-progreso', priority:'media', responsible:'Luisa G.', due:'2025-03-25' },
+    { id:'a4',  campaign:'c1', name:'Nota de prensa',              desc:'Envío a medios regionales',                     type:'PR',            channel:'Prensa',   status:'pendiente',   priority:'media', responsible:'Marcos T.', due:'2025-04-01' },
+    { id:'a5',  campaign:'c1', name:'Video testimonial ex-alumnos',desc:'Producción y edición de 3 videos',              type:'Audiovisual',   channel:'RRSS',     status:'pendiente',   priority:'baja',  responsible:'Pedro L.',  due:'2025-04-20' },
+    // c2 - Semana Educación
+    { id:'a6',  campaign:'c2', name:'Programa de actividades',     desc:'Definición de agenda y ponentes',               type:'Planificación', channel:'Interno',  status:'pendiente',   priority:'alta',  responsible:'Ana M.',    due:'2025-07-15' },
+    // c3 - Congreso VcM
+    { id:'a7',  campaign:'c3', name:'Convocatoria ponentes',       desc:'Invitaciones a expertos externos',              type:'Eventos',       channel:'Email',    status:'completada',  priority:'alta',  responsible:'Sofía L.', due:'2025-04-20' },
+    { id:'a8',  campaign:'c3', name:'Diseño web del congreso',     desc:'Landing page y formulario de inscripción',      type:'Digital',       channel:'Web',      status:'en-progreso', priority:'alta',  responsible:'Diego P.', due:'2025-05-01' },
+    { id:'a9',  campaign:'c3', name:'Campaña email marketing',     desc:'Serie de 4 emails a base de datos',             type:'Email',         channel:'Email',    status:'pendiente',   priority:'media', responsible:'Sofía L.', due:'2025-05-15' },
+    // c4 - Alianzas
+    { id:'a10', campaign:'c4', name:'Kit comunicacional alianzas', desc:'Templates y guía de co-branding',               type:'Diseño',        channel:'Interno',  status:'pendiente',   priority:'media', responsible:'Luisa G.', due:'2025-05-30' },
+    // c5 - Divulgación Q1
+    { id:'a11', campaign:'c5', name:'Artículo en revista indexada',desc:'Difusión de resultados investigación',          type:'Publicación',   channel:'Académico',status:'completada',  priority:'alta',  responsible:'Dra. Vega', due:'2025-02-15' },
+    { id:'a12', campaign:'c5', name:'Newsletter investigadores',   desc:'Boletín mensual con novedades',                 type:'Email',         channel:'Email',    status:'completada',  priority:'baja',  responsible:'Paula S.', due:'2025-03-01' },
+    { id:'a13', campaign:'c5', name:'Infografía resultados',       desc:'Resumen visual para redes',                     type:'Diseño',        channel:'RRSS',     status:'completada',  priority:'media', responsible:'Luisa G.', due:'2025-03-10' },
+    // c7 - Protocolo Crisis
+    { id:'a14', campaign:'c7', name:'Manual de crisis (v1)',       desc:'Redacción y revisión interna',                  type:'Planificación', channel:'Interno',  status:'completada',  priority:'alta',  responsible:'Roberto F.',due:'2025-03-01' },
+    { id:'a15', campaign:'c7', name:'Simulacro de crisis',         desc:'Ejercicio práctico con directivos',             type:'Capacitación',  channel:'Interno',  status:'pendiente',   priority:'alta',  responsible:'Carla M.', due:'2025-05-20' },
+    { id:'a16', campaign:'c7', name:'Actualización manual (v2)',   desc:'Incorporar lecciones aprendidas',               type:'Planificación', channel:'Interno',  status:'pendiente',   priority:'media', responsible:'Roberto F.',due:'2025-07-01' },
+    // c8 - Monitoreo
+    { id:'a17', campaign:'c8', name:'Setup herramienta monitoreo', desc:'Configuración de alertas y keywords',           type:'Digital',       channel:'Web',      status:'completada',  priority:'alta',  responsible:'Diego P.', due:'2025-04-10' },
+    { id:'a18', campaign:'c8', name:'Informe semanal menciones',   desc:'Reporte de cobertura y sentiment',              type:'Publicación',   channel:'Interno',  status:'en-progreso', priority:'media', responsible:'Carla M.', due:'2025-06-27' },
+  ]
+};
+
+// ────────────────────────────────────────────────────────────────
+// DATOS (con persistencia local)
+// ────────────────────────────────────────────────────────────────
+let data = (() => {
+  try {
+    const stored = localStorage.getItem('complan_v2');
+    return stored ? JSON.parse(stored) : JSON.parse(JSON.stringify(INITIAL_DATA));
+  } catch { return JSON.parse(JSON.stringify(INITIAL_DATA)); }
+})();
+
+function save() {
+  try { localStorage.setItem('complan_v2', JSON.stringify(data)); } catch {}
+}
+
+// ────────────────────────────────────────────────────────────────
+// UI STATE
+// ────────────────────────────────────────────────────────────────
+let activeAccount  = 'ceuss';
+let openCampaigns  = new Set(['c1','c7']);
+let filterStatus   = 'all';
+let searchTerm     = '';
+let editingCampaign= null;
+let editingAction  = null;
+let deletingId     = null;
+let deleteType     = null;
+
+// ────────────────────────────────────────────────────────────────
+// UTILS
+// ────────────────────────────────────────────────────────────────
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  const M = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  return `${parseInt(day)} ${M[parseInt(m)-1]} ${y}`;
+}
+
+function isOverdue(a) {
+  return a.status !== 'completada' && a.status !== 'cancelada' && a.due && new Date(a.due) < new Date();
+}
+
+const AVATAR_COLORS = ['#2B5CE6','#6B3FD4','#0D7A6A','#C73532','#B05A0A','#0D5A8A','#1E7A4A','#7A3F0D'];
+function avatarColor(name) {
+  if (!name) return AVATAR_COLORS[0];
+  let h = 0;
+  for (let i = 0; i < name.length; i++) h = name.charCodeAt(i) + ((h << 5) - h);
+  return AVATAR_COLORS[Math.abs(h) % AVATAR_COLORS.length];
+}
+
+// ────────────────────────────────────────────────────────────────
+// COMPUTED
+// ────────────────────────────────────────────────────────────────
+function campaignsFor(accountId) {
+  return data.campaigns.filter(c => c.account === accountId);
+}
+function actionsFor(campaignId) {
+  return data.actions.filter(a => a.campaign === campaignId);
+}
+function campProgress(campaignId) {
+  const acts = actionsFor(campaignId);
+  if (!acts.length) return 0;
+  return Math.round(acts.filter(a => a.status === 'completada').length / acts.length * 100);
+}
+function progressColor(pct) {
+  if (pct >= 80) return '#1E7A4A';
+  if (pct >= 40) return '#2B5CE6';
+  return '#B05A0A';
+}
+function globalStats() {
+  const camps   = data.campaigns.length;
+  const acts    = data.actions.length;
+  const done    = data.actions.filter(a => a.status === 'completada').length;
+  const overdue = data.actions.filter(a => isOverdue(a)).length;
+  return { camps, acts, done, overdue };
+}
+function accountStats(accountId) {
+  const camps = campaignsFor(accountId);
+  const acts  = data.actions.filter(a => camps.some(c => c.id === a.campaign));
+  const done  = acts.filter(a => a.status === 'completada').length;
+  return { camps: camps.length, acts: acts.length, done, inProg: acts.filter(a=>a.status==='en-progreso').length };
+}
+
+// ────────────────────────────────────────────────────────────────
+// BADGE HELPERS
+// ────────────────────────────────────────────────────────────────
+function statusBadge(s) {
+  return `<span class="badge badge-${s}">${STATUS_LABELS[s] || s}</span>`;
+}
+function prioBadge(p) {
+  const ico = { alta:'▲', media:'●', baja:'▼' };
+  return `<span class="prio prio-${p||'media'}">${ico[p]||'●'} ${PRIO_LABELS[p]||p}</span>`;
+}
+
+// ────────────────────────────────────────────────────────────────
+// RENDER: SIDEBAR
+// ────────────────────────────────────────────────────────────────
+function renderSidebar() {
+  document.getElementById('accounts-list').innerHTML = Object.values(ACCOUNTS).map(ac => {
+    const stats   = accountStats(ac.id);
+    const isActive= ac.id === activeAccount;
+    return `
+    <div class="account-item ${isActive ? 'active' : ''}" onclick="setAccount('${ac.id}')">
+      <div class="account-dot" style="background:${ac.color}${isActive?'28':'1A'};color:${ac.color};">${ac.abbr}</div>
+      <div class="account-info">
+        <div class="account-name">${ac.name}</div>
+        <div class="account-meta">${stats.camps} camp. · ${stats.acts} acc.</div>
+      </div>
+      <div class="account-badge" style="background:${ac.color}1A;color:${ac.color};">${stats.camps}</div>
+    </div>`;
+  }).join('');
+
+  const gs = globalStats();
+  document.getElementById('global-stats').innerHTML = `
+    <div class="stat-mini"><span class="stat-mini-val">${gs.camps}</span><span class="stat-mini-lbl">Campañas</span></div>
+    <div class="stat-mini"><span class="stat-mini-val">${gs.acts}</span><span class="stat-mini-lbl">Acciones</span></div>
+    <div class="stat-mini"><span class="stat-mini-val">${gs.done}</span><span class="stat-mini-lbl">Completadas</span></div>
+    <div class="stat-mini" style="${gs.overdue ? 'background:var(--danger-light)' : ''}">
+      <span class="stat-mini-val" style="${gs.overdue ? 'color:var(--danger)' : ''}">${gs.overdue}</span>
+      <span class="stat-mini-lbl">Vencidas</span>
+    </div>`;
+}
+
+// ────────────────────────────────────────────────────────────────
+// RENDER: MAIN
+// ────────────────────────────────────────────────────────────────
+function renderMain() {
+  const ac    = ACCOUNTS[activeAccount];
+  const stats = accountStats(activeAccount);
+  const pct   = stats.acts ? Math.round(stats.done / stats.acts * 100) : 0;
+
+  let camps = campaignsFor(activeAccount);
+  if (filterStatus !== 'all') camps = camps.filter(c => c.status === filterStatus);
+  if (searchTerm) {
+    const t = searchTerm.toLowerCase();
+    camps = camps.filter(c =>
+      c.name.toLowerCase().includes(t) ||
+      (c.desc || '').toLowerCase().includes(t)
+    );
+  }
+
+  document.getElementById('main-content').innerHTML = `
+  <div class="account-header">
+    <div class="account-title-row">
+      <div class="account-icon-lg" style="background:${ac.color}20;color:${ac.color};">${ac.abbr}</div>
+      <div style="flex:1;">
+        <div class="account-title-lg">${ac.name}</div>
+        <div class="account-desc">${ac.desc}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-size:11px;color:var(--text3);margin-bottom:5px;">Avance global</div>
+        <div style="display:flex;align-items:center;gap:9px;">
+          <div style="width:130px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+            <div style="width:${pct}%;height:100%;background:${ac.color};border-radius:3px;transition:width .4s;"></div>
+          </div>
+          <span style="font-size:15px;font-weight:700;color:${ac.color};">${pct}%</span>
+        </div>
+      </div>
+    </div>
+    <div class="account-kpis">
+      <div class="kpi-tab active">
+        <span class="kpi-tab-val">${stats.camps}</span> Campañas
+      </div>
+      <div class="kpi-tab">
+        <span class="kpi-tab-val">${stats.acts}</span> Acciones totales
+      </div>
+      <div class="kpi-tab">
+        <span class="kpi-tab-val" style="color:var(--success)">${stats.done}</span> Completadas
+      </div>
+      <div class="kpi-tab">
+        <span class="kpi-tab-val" style="color:var(--accent)">${stats.inProg}</span> En progreso
+      </div>
+      <div class="kpi-tab">
+        <span class="kpi-tab-val" style="color:var(--warning)">${stats.acts - stats.done - stats.inProg > 0 ? stats.acts - stats.done - stats.inProg : 0}</span> Pendientes
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="toolbar">
+      <div class="search-box">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="var(--text3)">
+          <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85.708-.708-3.85-3.85zM6.5 12a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+        </svg>
+        <input type="text" placeholder="Buscar campaña…" id="search-input"
+               oninput="onSearch(this.value)" value="${searchTerm}">
+      </div>
+      <div class="filter-chips">
+        ${['all','pendiente','en-progreso','completada','pausada','cancelada'].map(s =>
+          `<span class="filter-chip ${filterStatus===s?'active':''}" onclick="setFilter('${s}')">${s==='all'?'Todas':STATUS_LABELS[s]}</span>`
+        ).join('')}
+      </div>
+      <div class="spacer"></div>
+      <button class="btn btn-primary btn-sm" onclick="openNewCampaign()">
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="currentColor">
+          <path d="M6.75 0h-1.5v5.25H0v1.5h5.25V12h1.5V6.75H12v-1.5H6.75V0z"/>
+        </svg>
+        Nueva campaña
+      </button>
+    </div>
+
+    <div class="campaigns-grid" id="campaigns-grid">
+      ${camps.length
+        ? camps.map(c => renderCampaignCard(c)).join('')
+        : `<div class="empty-state">
+             <div class="empty-icon">📋</div>
+             <div class="empty-title">Sin resultados</div>
+             <div class="empty-desc">No hay campañas que coincidan con los filtros activos.</div>
+             <button class="btn btn-ghost btn-sm" onclick="setFilter('all');onSearch('')">Limpiar filtros</button>
+           </div>`}
+    </div>
+  </div>`;
+}
+
+// ────────────────────────────────────────────────────────────────
+// RENDER: CAMPAIGN CARD
+// ────────────────────────────────────────────────────────────────
+function renderCampaignCard(camp) {
+  const acts   = actionsFor(camp.id);
+  const pct    = campProgress(camp.id);
+  const isOpen = openCampaigns.has(camp.id);
+  const done   = acts.filter(a => a.status === 'completada').length;
+  const inProg = acts.filter(a => a.status === 'en-progreso').length;
+
+  return `
+  <div class="campaign-card" id="camp-${camp.id}">
+    <div class="campaign-header" onclick="toggleCampaign('${camp.id}')">
+      <div class="campaign-toggle ${isOpen ? 'open' : ''}">
+        <svg width="9" height="9" viewBox="0 0 9 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="2,1 7,4.5 2,8"/>
+        </svg>
+      </div>
+      <div class="campaign-color-bar" style="background:${camp.color};"></div>
+      <div class="campaign-info">
+        <div class="campaign-name">${camp.name}</div>
+        <div class="campaign-meta">
+          ${statusBadge(camp.status)}
+          ${camp.start ? `<span class="campaign-date">${fmtDate(camp.start)} → ${fmtDate(camp.end)}</span>` : ''}
+          ${camp.desc ? `<span class="campaign-date">· ${camp.desc}</span>` : ''}
+        </div>
+      </div>
+      <div class="campaign-counters">
+        <div class="camp-count"><span class="camp-count-val">${acts.length}</span><span class="camp-count-lbl">Total</span></div>
+        <div class="camp-count"><span class="camp-count-val" style="color:var(--success)">${done}</span><span class="camp-count-lbl">Listas</span></div>
+        <div class="camp-count"><span class="camp-count-val" style="color:var(--accent)">${inProg}</span><span class="camp-count-lbl">Prog.</span></div>
+      </div>
+      <div class="campaign-progress-wrap">
+        <div class="progress-bar">
+          <div class="progress-fill" style="width:${pct}%;background:${progressColor(pct)};"></div>
+        </div>
+        <span class="progress-pct">${pct}%</span>
+      </div>
+      <div class="campaign-btns" onclick="event.stopPropagation()">
+        <button class="btn btn-ghost btn-sm btn-icon" title="Agregar acción" onclick="openNewAction('${camp.id}')">
+          <svg width="13" height="13" viewBox="0 0 12 12" fill="currentColor"><path d="M6.75 0h-1.5v5.25H0v1.5h5.25V12h1.5V6.75H12v-1.5H6.75V0z"/></svg>
+        </button>
+        <button class="btn btn-ghost btn-sm btn-icon" title="Editar campaña" onclick="openEditCampaign('${camp.id}')">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zm2.354 1.354L13 3 10.5 1.207 11.207 2.5 13.5 4.793l1-1zm-.5 2L11.5 2.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/></svg>
+        </button>
+        <button class="btn btn-danger btn-sm btn-icon" title="Eliminar campaña" onclick="confirmDelete('campaign','${camp.id}')">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="actions-section ${isOpen ? '' : 'collapsed'}" id="acts-${camp.id}">
+      ${acts.length ? `
+      <div class="actions-table-wrap">
+        <table class="actions-table">
+          <thead>
+            <tr>
+              <th>Acción</th>
+              <th>Tipo</th>
+              <th>Canal</th>
+              <th>Estado</th>
+              <th>Prioridad</th>
+              <th>Responsable</th>
+              <th>Vencimiento</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            ${acts.map(a => `
+            <tr id="act-${a.id}">
+              <td>
+                <div class="action-name">${a.name}</div>
+                ${a.desc ? `<div class="action-desc">${a.desc}</div>` : ''}
+              </td>
+              <td><span class="type-chip">${a.type || '—'}</span></td>
+              <td><span class="channel-chip">${a.channel || '—'}</span></td>
+              <td>${statusBadge(a.status)}</td>
+              <td>${prioBadge(a.priority)}</td>
+              <td>
+                <div style="display:flex;align-items:center;gap:7px;">
+                  <div class="avatar-sm" style="background:${avatarColor(a.responsible)}20;color:${avatarColor(a.responsible)};">
+                    ${(a.responsible || '?')[0].toUpperCase()}
+                  </div>
+                  <span style="font-size:12px;color:var(--text2);">${a.responsible || '—'}</span>
+                </div>
+              </td>
+              <td>
+                <span style="font-size:12px;color:${isOverdue(a) ? 'var(--danger)' : 'var(--text2)'}; white-space:nowrap;">
+                  ${fmtDate(a.due)}
+                  ${isOverdue(a) ? '<span class="overdue-dot" title="Vencida"></span>' : ''}
+                </span>
+              </td>
+              <td>
+                <div style="display:flex;gap:4px;">
+                  <button class="btn btn-ghost btn-sm btn-icon" title="Editar" onclick="openEditAction('${a.id}')">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10z"/></svg>
+                  </button>
+                  <button class="btn btn-danger btn-sm btn-icon" title="Eliminar" onclick="confirmDelete('action','${a.id}')">
+                    <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1z"/></svg>
+                  </button>
+                </div>
+              </td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>` : `
+      <div class="empty-state" style="padding:24px 20px;">
+        <div class="empty-icon">📝</div>
+        <div class="empty-title">Sin acciones aún</div>
+        <div class="empty-desc">Agrega la primera acción a esta campaña.</div>
+        <button class="btn btn-primary btn-sm" onclick="openNewAction('${camp.id}')">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6.75 0h-1.5v5.25H0v1.5h5.25V12h1.5V6.75H12v-1.5H6.75V0z"/></svg>
+          Agregar acción
+        </button>
+      </div>`}
+      <div class="actions-footer">
+        <button class="btn btn-ghost btn-sm" onclick="openNewAction('${camp.id}')">
+          <svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M6.75 0h-1.5v5.25H0v1.5h5.25V12h1.5V6.75H12v-1.5H6.75V0z"/></svg>
+          Agregar acción
+        </button>
+        <span style="font-size:11px;color:var(--text3);margin-left:auto;">
+          ${acts.length} acción${acts.length!==1?'es':''} · ${pct}% completado
+        </span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ────────────────────────────────────────────────────────────────
+// TOGGLE CAMPAIGN
+// ────────────────────────────────────────────────────────────────
+function toggleCampaign(id) {
+  if (openCampaigns.has(id)) openCampaigns.delete(id);
+  else openCampaigns.add(id);
+  renderMain();
+}
+
+// ────────────────────────────────────────────────────────────────
+// NAVIGATION
+// ────────────────────────────────────────────────────────────────
+function setAccount(id) {
+  activeAccount = id;
+  filterStatus  = 'all';
+  searchTerm    = '';
+  renderSidebar();
+  renderMain();
+}
+function setFilter(s)  { filterStatus = s; renderMain(); }
+function onSearch(val) { searchTerm = val.toLowerCase(); renderMain(); }
+
+// ────────────────────────────────────────────────────────────────
+// MODAL
+// ────────────────────────────────────────────────────────────────
+function openModal(html) {
+  document.getElementById('modal-content').innerHTML = html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModalOutside(e) {
+  if (e.target === document.getElementById('modal-overlay')) _closeModal();
+}
+function _closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingCampaign = editingAction = deletingId = deleteType = null;
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') _closeModal(); });
+
+// ────────────────────────────────────────────────────────────────
+// CAMPAIGN CRUD
+// ────────────────────────────────────────────────────────────────
+function openNewCampaign()   { editingCampaign = null; openModal(buildCampaignForm(null)); }
+function openEditCampaign(id){ editingCampaign = id;   openModal(buildCampaignForm(data.campaigns.find(c=>c.id===id))); }
+
+function buildCampaignForm(c) {
+  const isEdit = !!c;
+  const ac = ACCOUNTS[activeAccount];
+  return `
+  <div class="modal-header">
+    <div class="modal-title">${isEdit ? 'Editar campaña' : 'Nueva campaña'}</div>
+    <div class="modal-sub">Cuenta: <strong>${ac.name}</strong></div>
+  </div>
+  <div class="modal-body">
+    <div class="form-section-title">Información general</div>
+    <div class="form-group">
+      <label class="form-label">Nombre de la campaña *</label>
+      <input class="form-control" id="f-cname" placeholder="Ej: Lanzamiento Admisión 2026" value="${c?.name||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <textarea class="form-control" id="f-cdesc" placeholder="Objetivo y alcance de la campaña">${c?.desc||''}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="f-cstatus">
+          ${Object.entries(STATUS_LABELS).map(([v,l])=>`<option value="${v}" ${(c?.status||'pendiente')===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Color de campaña</label>
+        <input type="color" class="form-control" id="f-ccolor" value="${c?.color||ac.color}">
+      </div>
+    </div>
+    <div class="form-section-title" style="margin-top:4px;">Fechas</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Fecha de inicio</label>
+        <input type="date" class="form-control" id="f-cstart" value="${c?.start||''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de fin</label>
+        <input type="date" class="form-control" id="f-cend" value="${c?.end||''}">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="_closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="saveCampaign()">${isEdit ? 'Guardar cambios' : 'Crear campaña'}</button>
+  </div>`;
+}
+
+function saveCampaign() {
+  const name = document.getElementById('f-cname').value.trim();
+  if (!name) { toast('El nombre es obligatorio', 'error'); return; }
+  const obj = {
+    name,
+    desc:    document.getElementById('f-cdesc').value.trim(),
+    status:  document.getElementById('f-cstatus').value,
+    color:   document.getElementById('f-ccolor').value,
+    start:   document.getElementById('f-cstart').value,
+    end:     document.getElementById('f-cend').value,
+    account: activeAccount
+  };
+  if (editingCampaign) {
+    const i = data.campaigns.findIndex(c => c.id === editingCampaign);
+    data.campaigns[i] = { ...data.campaigns[i], ...obj };
+    toast('Campaña actualizada');
+  } else {
+    const id = uid();
+    data.campaigns.push({ id, ...obj });
+    openCampaigns.add(id);
+    toast('Campaña creada');
+  }
+  save(); _closeModal(); renderSidebar(); renderMain();
+}
+
+// ────────────────────────────────────────────────────────────────
+// ACTION CRUD
+// ────────────────────────────────────────────────────────────────
+function openNewAction(campId)  { editingAction = null;  openModal(buildActionForm(null, campId)); }
+function openEditAction(id)     {
+  editingAction = id;
+  const a = data.actions.find(a => a.id === id);
+  openModal(buildActionForm(a, a.campaign));
+}
+
+function buildActionForm(a, campId) {
+  const isEdit = !!a;
+  const camp = data.campaigns.find(c => c.id === campId);
+  const ac   = ACCOUNTS[camp?.account || activeAccount];
+  const selType = a?.type    || 'Planificación';
+  const selCh   = a?.channel || 'RRSS';
+  const selSt   = a?.status  || 'pendiente';
+  const selPr   = a?.priority|| 'media';
+
+  return `
+  <div class="modal-header">
+    <div class="modal-title">${isEdit ? 'Editar acción' : 'Nueva acción'}</div>
+    <div class="modal-sub">Campaña: <strong>${camp?.name || ''}</strong> · ${ac?.name || ''}</div>
+  </div>
+  <div class="modal-body">
+    <input type="hidden" id="f-acampid" value="${campId}">
+    <div class="form-section-title">Información de la acción</div>
+    <div class="form-group">
+      <label class="form-label">Nombre de la acción *</label>
+      <input class="form-control" id="f-aname" placeholder="Ej: Pauta en Instagram" value="${a?.name||''}">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <textarea class="form-control" id="f-adesc" placeholder="Detalle, notas o entregables esperados">${a?.desc||''}</textarea>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Tipo de acción</label>
+        <select class="form-control" id="f-atype">
+          ${TYPES.map(t=>`<option ${selType===t?'selected':''}>${t}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Canal</label>
+        <select class="form-control" id="f-achannel">
+          ${CHANNELS.map(ch=>`<option ${selCh===ch?'selected':''}>${ch}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-section-title" style="margin-top:4px;">Estado y responsabilidad</div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Estado</label>
+        <select class="form-control" id="f-astatus">
+          ${Object.entries(STATUS_LABELS).map(([v,l])=>`<option value="${v}" ${selSt===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Prioridad</label>
+        <select class="form-control" id="f-apriority">
+          ${Object.entries(PRIO_LABELS).map(([v,l])=>`<option value="${v}" ${selPr===v?'selected':''}>${l}</option>`).join('')}
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Responsable</label>
+        <input class="form-control" id="f-aresp" placeholder="Nombre del responsable" value="${a?.responsible||''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de vencimiento</label>
+        <input type="date" class="form-control" id="f-adue" value="${a?.due||''}">
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="_closeModal()">Cancelar</button>
+    <button class="btn btn-primary" onclick="saveAction()">${isEdit ? 'Guardar cambios' : 'Crear acción'}</button>
+  </div>`;
+}
+
+function saveAction() {
+  const name = document.getElementById('f-aname').value.trim();
+  if (!name) { toast('El nombre es obligatorio', 'error'); return; }
+  const obj = {
+    name,
+    desc:        document.getElementById('f-adesc').value.trim(),
+    campaign:    document.getElementById('f-acampid').value,
+    type:        document.getElementById('f-atype').value,
+    channel:     document.getElementById('f-achannel').value,
+    status:      document.getElementById('f-astatus').value,
+    priority:    document.getElementById('f-apriority').value,
+    responsible: document.getElementById('f-aresp').value.trim(),
+    due:         document.getElementById('f-adue').value,
+  };
+  if (editingAction) {
+    const i = data.actions.findIndex(a => a.id === editingAction);
+    data.actions[i] = { ...data.actions[i], ...obj };
+    toast('Acción actualizada');
+  } else {
+    data.actions.push({ id: uid(), ...obj });
+    openCampaigns.add(obj.campaign);
+    toast('Acción creada');
+  }
+  save(); _closeModal(); renderSidebar(); renderMain();
+}
+
+// ────────────────────────────────────────────────────────────────
+// DELETE
+// ────────────────────────────────────────────────────────────────
+function confirmDelete(type, id) {
+  deletingId = id; deleteType = type;
+  const target = type === 'campaign'
+    ? `la campaña <strong>${data.campaigns.find(c=>c.id===id)?.name}</strong> y TODAS sus acciones`
+    : `la acción <strong>${data.actions.find(a=>a.id===id)?.name}</strong>`;
+  openModal(`
+  <div class="modal-header">
+    <div class="confirm-icon">🗑</div>
+    <div class="modal-title">Confirmar eliminación</div>
+    <div class="modal-sub">Esta acción no se puede deshacer.</div>
+  </div>
+  <div class="modal-body">
+    <p style="font-size:14px;color:var(--text2);line-height:1.5;">
+      ¿Estás seguro de que deseas eliminar ${target}?
+    </p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-ghost" onclick="_closeModal()">Cancelar</button>
+    <button class="btn btn-danger" onclick="doDelete()">Sí, eliminar</button>
+  </div>`);
+}
+
+function doDelete() {
+  if (deleteType === 'campaign') {
+    data.campaigns = data.campaigns.filter(c => c.id !== deletingId);
+    data.actions   = data.actions.filter(a => a.campaign !== deletingId);
+    openCampaigns.delete(deletingId);
+    toast('Campaña eliminada');
+  } else {
+    data.actions = data.actions.filter(a => a.id !== deletingId);
+    toast('Acción eliminada');
+  }
+  save(); _closeModal(); renderSidebar(); renderMain();
+}
+
+// ────────────────────────────────────────────────────────────────
+// EXPORT CSV
+// ────────────────────────────────────────────────────────────────
+function exportCSV() {
+  const ac   = ACCOUNTS[activeAccount];
+  const rows = [['Cuenta','Campaña','Estado Campaña','Acción','Tipo','Canal','Estado Acción','Prioridad','Responsable','Vencimiento']];
+  campaignsFor(activeAccount).forEach(c => {
+    const acts = actionsFor(c.id);
+    if (!acts.length) {
+      rows.push([ac.name, c.name, STATUS_LABELS[c.status], '—','—','—','—','—','—','—']);
+    } else {
+      acts.forEach(a => rows.push([
+        ac.name, c.name, STATUS_LABELS[c.status],
+        a.name, a.type||'', a.channel||'',
+        STATUS_LABELS[a.status], PRIO_LABELS[a.priority||'media'],
+        a.responsible||'', a.due||''
+      ]));
+    }
+  });
+  const csv  = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `${ac.name}_plan_comunicacional.csv`;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  toast('CSV exportado correctamente');
+}
+
+// ────────────────────────────────────────────────────────────────
+// TOAST
+// ────────────────────────────────────────────────────────────────
+function toast(msg, type = 'success') {
+  const wrap = document.getElementById('toast-wrap');
+  const el   = document.createElement('div');
+  el.className = 'toast';
+  const color = type === 'error' ? '#FF8A88' : '#6EE7B7';
+  const icon  = type === 'error' ? '✕' : '✓';
+  el.innerHTML = `<span style="color:${color};font-weight:700;">${icon}</span> ${msg}`;
+  wrap.appendChild(el);
+  setTimeout(() => { el.style.opacity='0'; el.style.transform='translateX(10px)'; el.style.transition='all .2s'; }, 2600);
+  setTimeout(() => el.remove(), 2900);
+}
+
+// ────────────────────────────────────────────────────────────────
+// INIT
+// ────────────────────────────────────────────────────────────────
+renderSidebar();
+renderMain();
+</script>
+</body>
+</html>
